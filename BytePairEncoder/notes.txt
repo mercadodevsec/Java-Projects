@@ -1,0 +1,179 @@
+We have the following 10 tokens provided:
+(_ stands for space)
+( [] denote ByteValues, these can be any byte, but I'm writing characters since all text for this example is simple ASCII)
+( <> denote TokenValues)
+
+```
+<0> = [i][n]
+<1> = [a]<0> (expands to 'ain')
+<2> = [h][e]
+<3> = <1>[_] (expands to 'ain ')
+<4> = <2>[_] (expands to 'he ')
+<5> = [l][y] (expands to 'ly')
+<6> = [o][n] (expands to 'on')
+<7> = [p]<3> (expands to 'pain ')
+<8> = [t]<4> (expands to 'the ')
+<9> = [l][l] (expands to 'll')
+<10> = [l]<9> (expands to 'lll')
+```
+
+# Simple Exaxmple
+( `simple_example(map)` ):
+Make a new list
+
+add([i])
+- adds i to end of list
+- no replacements
+([i])
+
+add(0, [h])
+- adds h to beginning of list
+- no replacements
+([h][i])
+
+add(1, [e])
+- adds e at index 1
+([h][e][i])
+- But wait!!
+<2> = [h][e]
+- So we replace [h][e] with <2>
+(<2>[i])
+
+add([n])
+- adds n to end of list
+(<2>[i][n])
+- But wait!!
+<0> = [i][n]
+- So we replace [i][n] with <0>
+(<2><0>)
+
+set(0, [p])
+([p]<0>)
+- no replacements
+
+add([_])
+([p]<0>[_])
+- no replacements
+
+add(1, [a])
+([p][a]<0>[[_]])
+- replace [a]<0>
+([p]<1>[_])
+- replace [1]<_>
+([p]<3>)
+- replace [p]<3>
+(<7>)
+
+Simple Example Code Output:
+```
+([i])
+([h][i])
+(<2>[i])
+(<2><0>)
+([p]<0>)
+([p]<0>[_])
+(<7>)
+Only 1 EncodingValue
+pain |
+
+([i])
+([h][i])
+(<2>[i])
+(<2><0>)
+([p]<0>)
+([p]<0>[ ])
+(<7>)
+Only 1 EncodingValue
+pain |
+```
+
+# Split Example
+- Make list
+- append input1.txt (uses addBytes(byte[])
+([T][h][e][_][r][a][i][n][_][i][n][_][S][p][a][i][n][_][f][a][l][l])
+- Found pair to replace: [i] [n]
+([T][h][e][_][r][a]<0>[_]<0>[_][S][p][a]<0>[_][f][a][l][l])
+- Found pair to replace: [a] <0>
+([T][h][e][_][r]<1>[_]<0>[_][S][p]<1>[_][f][a][l][l])
+- Found pair to replace: [h] [e]
+([T]<2>[_][r]<1>[_]<0>[_][S][p]<1>[_][f][a][l][l])
+- Found pair to replace: <1> [_]
+([T]<2>[_][r]<3><0>[_][S][p]<3>[f][a][l][l])
+- Found pair to replace: <2> [_]
+([T]<4>[r]<3><0>[_][S][p]<3>[f][a][l][l])
+- Found pair to replace: [p] <3>
+([T]<4>[r]<3><0>[_][S]<7>[f][a][l][l])
+- Found pair to replace: [l] [l]
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>)
+- No more replacements, addBytes(byte[]) finished
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>)
+([T]<4>[r]<3><0>[ ][S]<7>[f][a]<9>)
+
+- append input2.txt: "ls mainly on the plain."
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m][a][i][n][l][y][_][o][n][_][t][h][e][_][p][l][a][i][n][.])
+- Found pair to replace: [i] [n]
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m][a]<0>[l][y][_][o][n][_][t][h][e][_][p][l][a]<0>[.])
+- Found pair to replace: [a] <0>
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m]<1>[l][y][_][o][n][_][t][h][e][_][p][l]<1>[.])
+- Found pair to replace: [h] [e]
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m]<1>[l][y][_][o][n][_][t]<2>[_][p][l]<1>[.])
+- Found pair to replace: <2> [_]
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m]<1>[l][y][_][o][n][_][t]<4>[p][l]<1>[.])
+- Found pair to replace: [l] [y]
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m]<1><5>[_][o][n][_][t]<4>[p][l]<1>[.])
+- Found pair to replace: [o] [n]
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m]<1><5>[_]<6>[_][t]<4>[p][l]<1>[.])
+- Found pair to replace: [t] <4>
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m]<1><5>[_]<6>[_]<8>[p][l]<1>[.])
+- No more replacements, addBytes(byte[]) finished
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m]<1><5>[_]<6>[_]<8>[p][l]<1>[.])
+
+Split Example Code Output:
+```
+Input 1 Encoded:
+([T]<4>[r]<3><0>[ ][S]<7>[f][a]<9>)
+Input 1 then Input 2 Encoded:
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<9>[l][s][_][m]<1><5>[_]<6>[_]<8>[p][l]<1>[.])
+([T]<4>[r]<3><0>[ ][S]<7>[f][a]<9>[l][s][ ][m]<1><5>[ ]<6>[ ]<8>[p][l]<1>[.])
+```
+
+# Combined Example
+- Make list
+- append input1-input2.txt "The rain in Spain fallls mainly on the plain."
+- The 3 l's is intentional
+([T][h][e][_][r][a][i][n][_][i][n][_][S][p][a][i][n][_][f][a][l][l][l][s][_][m][a][i][n][l][y][_][o][n][_][t][h][e][_][p][l][a][i][n][.])
+Found pair to replace: [i] [n]
+([T][h][e][_][r][a]<0>[_]<0>[_][S][p][a]<0>[_][f][a][l][l][l][s][_][m][a]<0>[l][y][_][o][n][_][t][h][e][_][p][l][a]<0>[.])
+Found pair to replace: [a] <0>
+([T][h][e][_][r]<1>[_]<0>[_][S][p]<1>[_][f][a][l][l][l][s][_][m]<1>[l][y][_][o][n][_][t][h][e][_][p][l]<1>[.])
+Found pair to replace: [h] [e]
+([T]<2>[_][r]<1>[_]<0>[_][S][p]<1>[_][f][a][l][l][l][s][_][m]<1>[l][y][_][o][n][_][t]<2>[_][p][l]<1>[.])
+Found pair to replace: <1> [_]
+([T]<2>[_][r]<3><0>[_][S][p]<3>[f][a][l][l][l][s][_][m]<1>[l][y][_][o][n][_][t]<2>[_][p][l]<1>[.])
+Found pair to replace: <2> [_]
+([T]<4>[r]<3><0>[_][S][p]<3>[f][a][l][l][l][s][_][m]<1>[l][y][_][o][n][_][t]<4>[p][l]<1>[.])
+Found pair to replace: [l] [y]
+([T]<4>[r]<3><0>[_][S][p]<3>[f][a][l][l][l][s][_][m]<1><5>[_][o][n][_][t]<4>[p][l]<1>[.])
+Found pair to replace: [o] [n]
+([T]<4>[r]<3><0>[_][S][p]<3>[f][a][l][l][l][s][_][m]<1><5>[_]<6>[_][t]<4>[p][l]<1>[.])
+Found pair to replace: [p] <3>
+([T]<4>[r]<3><0>[_][S]<7>[f][a][l][l][l][s][_][m]<1><5>[_]<6>[_][t]<4>[p][l]<1>[.])
+Found pair to replace: [t] <4>
+([T]<4>[r]<3><0>[_][S]<7>[f][a][l][l][l][s][_][m]<1><5>[_]<6>[_]<8>[p][l]<1>[.])
+Found pair to replace: [l] [l]
+([T]<4>[r]<3><0>[_][S]<7>[f][a][l]<9>[s][_][m]<1><5>[_]<6>[_]<8>[p][l]<1>[.])
+Found pair to replace: [l] <9>
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<10>[s][_][m]<1><5>[_]<6>[_]<8>[p][l]<1>[.])
+- No more replacements, addBytes(byte[]) finished
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<10>[s][_][m]<1><5>[_]<6>[_]<8>[p][l]<1>[.])
+
+Combined Example Code Output:
+```
+Input1-Input2 Encoded Together:
+([T]<4>[r]<3><0>[_][S]<7>[f][a]<10>[s][_][m]<1><5>[_]<6>[_]<8>[p][l]<1>[.])
+([T]<4>[r]<3><0>[ ][S]<7>[f][a]<10>[s][ ][m]<1><5>[ ]<6>[ ]<8>[p][l]<1>[.])
+```
+
+## A useful bit of code to write
+Check that the output list of Split Example is *different* from the output list of Combined Example.
+The overall text contained is the same, but since we compressed in different ways, we got a different tokenization
