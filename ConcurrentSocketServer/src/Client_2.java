@@ -19,6 +19,7 @@ public class Client_2 {
 		long totalElapsedTime = 0;
 		double avgElapsedTime = 0.0;
 		int totalClientRequest = 0;
+        // For testing purposes, override client IP
 
 		// Server connection parameters
 		String ipAddress = "";
@@ -43,7 +44,7 @@ public class Client_2 {
 					if (ipAddress.charAt(i) == '.') {
 						dotCount++;
 						// Check for invalid formats
-						if (ipAddress.contains("..") || ipAddress.charAt(0) == '.' 
+						if (ipAddress.contains("..") || ipAddress.charAt(0) == '.'
 								|| ipAddress.charAt(ipAddress.length() - 1) == '.') {
 							isValid = false;
 							break;
@@ -119,7 +120,7 @@ public class Client_2 {
 
 				// Output individual turnaround times
 				for (int i = 0; i < clientRequestAmount; i++) {
-					System.out.printf("Turn-around time for client request number %d: %dms\n\n", 
+					System.out.printf("Turn-around time for client request number %d: %dms\n\n",
 						i + 1, ClientSharedData.clientElapsedTime[i]);
 					totalElapsedTime += ClientSharedData.clientElapsedTime[i];
 				}

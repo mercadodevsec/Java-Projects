@@ -2,7 +2,7 @@
  * The Class Person. Represents a basic person with name, email, and age
  * information. Implements the Printable interface for CSV output support.
  */
-public class Person implements Printable {
+abstract class Person implements Printable {
 
 	/** The name of the person. */
 	private String name;

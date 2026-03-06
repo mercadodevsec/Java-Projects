@@ -11,7 +11,9 @@ import java.net.Socket;
  */
 public class ConcurrentServer extends Thread {
 
-    /** The socket for the connected client. */
+    /**
+     * The socket for the connected client.
+     */
     private Socket socketClient;
 
     /**
@@ -135,6 +137,7 @@ public class ConcurrentServer extends Thread {
         StringBuilder output = new StringBuilder();
         String line;
         try {
+            command = "wsl " + command;
             String[] cmdArray = command.split(" ");
             ProcessBuilder pb = new ProcessBuilder(cmdArray);
             Process p = pb.start();
